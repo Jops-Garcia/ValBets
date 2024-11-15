@@ -10,3 +10,6 @@ Estrutura do Projeto
 Android App (Java/Kotlin): Interface principal do aplicativo.
 Web3j: Biblioteca para interagir com o contrato inteligente na blockchain Ethereum.
 Smart Contract (Solidity): Contrato inteligente que gerencia as apostas, armazenamento de dados e declara o vencedor automaticamente.
+
+![print1](https://github.com/user-attachments/assets/bef5a362-2ed9-4720-9f47-dc3147c631fc)
+![print2](https://github.com/user-attachments/assets/be22a757-f37d-4ada-992f-9f02980a3a21)
