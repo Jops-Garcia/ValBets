@@ -1,4 +1,4 @@
-# ValBets - Aplicativo de Apostas em Partidas Usando Ethereum
+# ValBets - Aplicativo de Apostas em Partidas de Valorant Usando Ethereum
 Este é um projeto de aplicativo Android que permite ao usuário apostar em partidas esportivas com criptomoedas, usando a rede Ethereum. O projeto utiliza um contrato inteligente desenvolvido com Solidity e a biblioteca Web3j para integração com a blockchain, especificamente em uma rede de testes (Sepolia).
 
 # Funcionalidades
