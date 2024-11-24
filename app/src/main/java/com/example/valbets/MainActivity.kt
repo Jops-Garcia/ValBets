@@ -34,6 +34,11 @@ import org.web3j.tx.gas.DefaultGasProvider
 import org.web3j.utils.Convert
 import java.math.BigDecimal
 import java.math.BigInteger
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.datatypes.Function
+import org.web3j.crypto.RawTransaction
+import org.web3j.crypto.TransactionEncoder
+import org.web3j.protocol.core.DefaultBlockParameterName
 
 
 class MainActivity : AppCompatActivity() {
@@ -138,6 +143,19 @@ class PartidaAdapter(private val context: Context, private val matches: List<Mat
         val edtQuantidade = dialogView.findViewById<EditText>(R.id.edtQuantidade)
         val radioGroupTimes = dialogView.findViewById<RadioGroup>(R.id.radioGroupTimes)
 
+        // Adicionar dinamicamente os nomes dos times
+        val radioButtonTeamA = RadioButton(context).apply {
+            text = partida.equipeA.name
+            id = View.generateViewId()
+        }
+        val radioButtonTeamB = RadioButton(context).apply {
+            text = partida.equipeB.name
+            id = View.generateViewId()
+        }
+
+        radioGroupTimes.addView(radioButtonTeamA)
+        radioGroupTimes.addView(radioButtonTeamB)
+
         dialog.setView(dialogView)
         dialog.setTitle("Fazer Aposta")
         dialog.setPositiveButton("Apostar") { _, _ ->
@@ -145,73 +163,83 @@ class PartidaAdapter(private val context: Context, private val matches: List<Mat
             val timeSelecionadoId = radioGroupTimes.checkedRadioButtonId
 
             if (quantidade != null && timeSelecionadoId != -1) {
-                val timeSelecionado = when (timeSelecionadoId) {
-                    R.id.radioTimeA -> partida.equipeA.name
-                    R.id.radioTimeB -> partida.equipeB.name
-                    else -> null
-                }
+                val timeSelecionado = dialogView.findViewById<RadioButton>(timeSelecionadoId).text.toString()
 
-                if (timeSelecionado != null) {
-                    enviarTransacao(quantidade, partida, timeSelecionado, context)
-                } else {
-                    Toast.makeText(context, "Selecione um time válido.", Toast.LENGTH_SHORT).show()
-                }
+                enviarTransacao(quantidade, partida, timeSelecionado, context)
             } else {
-                Toast.makeText(context, "Por favor, insira todos os dados.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Por favor, insira todos os dados!", Toast.LENGTH_SHORT).show()
             }
         }
         dialog.setNegativeButton("Cancelar", null)
         dialog.show()
     }
 
-    fun enviarTransacao(valor: BigDecimal, partida: Match, timeSelecionado: String, context: Context) {
-        val infuraUrl = "https://sepolia.infura.io/v3/<sua-api-key>"
-        val contractAddress = "<endereco-do-contrato>"
-
-        val web3j = Web3j.build(HttpService(infuraUrl))
+    fun enviarTransacao(valor: BigDecimal, partida: Match, time: String, context: Context) {
+        val web3j = Web3j.build(HttpService("https://sepolia.infura.io/v3/<YOUR_INFURA_PROJECT_ID>"))
+        val credentials = Credentials.create("<PRIVATE_KEY>")
+        val contratoEndereco = "0x09E39230a55310E616ee8B72B7b4a07fE8204477"
 
         try {
-            // Conectar à carteira via MetaMask
-            val ethAmount = Convert.toWei(valor, Convert.Unit.ETHER).toBigInteger()
+            val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.LATEST)
+                .send()
+                .transactionCount
 
-            // Determinar a função do contrato a ser chamada
-            val functionName = if (timeSelecionado == partida.equipeA.name) {
-                "placeBetOnTeamA"
-            } else if (timeSelecionado == partida.equipeB.name) {
-                "placeBetOnTeamB"
-            } else {
-                Toast.makeText(context, "Time selecionado inválido.", Toast.LENGTH_SHORT).show()
-                return
-            }
+            val gasPrice = web3j.ethGasPrice().send().gasPrice
 
-            // Construa a transação com os dados necessários
-            val transaction = Transaction.createFunctionCallTransaction(
-                "<sua-carteira>",
-                null,
-                BigInteger.ZERO,
-                DefaultGasProvider.GAS_LIMIT,
-                contractAddress,
-                ethAmount,
-                org.web3j.abi.datatypes.Function(
-                    functionName,
-                    emptyList(),
-                    emptyList()
-                ).encode()
+            // Converter valor para Wei
+            val value = Convert.toWei(valor, Convert.Unit.ETHER).toBigInteger()
+
+            // Definir a função a ser chamada com base no time
+            val functionName = if (time == partida.equipeA.name) "placeBetOnTeamA" else "placeBetOnTeamB"
+
+            val function = org.web3j.abi.datatypes.Function(
+                functionName,
+                listOf(), // Nenhum parâmetro para estas funções
+                emptyList()
             )
 
-             //Envie a transação para a rede via MetaMask
-            val response = web3j.ethSendTransaction(transaction).send()
+            val encodedFunction = FunctionEncoder.encode(function)
+
+            val transaction = Transaction.createFunctionCallTransaction(
+                credentials.address,
+                nonce,
+                gasPrice,
+                null, // Deixe o gasLimit nulo para estimativa
+                contratoEndereco,
+                value,
+                encodedFunction
+            )
+
+            val estimatedGas = web3j.ethEstimateGas(transaction).send().amountUsed
+            val gasLimit = estimatedGas.add(BigInteger.valueOf(10000)) // Adicione margem
+
+            // Construir transação final
+            val rawTransaction = RawTransaction.createTransaction(
+                nonce,
+                gasPrice,
+                gasLimit,
+                contratoEndereco,
+                value,
+                encodedFunction
+            )
+
+            val signedTransaction = TransactionEncoder.signMessage(rawTransaction, credentials)
+            val signedHex = "0x" + signedTransaction.joinToString("") { "%02x".format(it) }
+
+            val response = web3j.ethSendRawTransaction(signedHex).send()
 
             if (response.hasError()) {
-                Toast.makeText(context, "Erro na transação: ${response.error.message}", Toast.LENGTH_LONG).show()
+                println("Erro na transação: ${response.error.message}")
+                Toast.makeText(context, "Erro: ${response.error.message}", Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, "Aposta realizada! TxHash: ${response.transactionHash}", Toast.LENGTH_LONG).show()
+                println("Transação enviada com sucesso! Hash: ${response.transactionHash}")
+                Toast.makeText(context, "Transação enviada! Hash: ${response.transactionHash}", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Erro ao enviar transação: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Erro: ${e.message}", Toast.LENGTH_LONG).show()
+            println("Erro ao enviar transação: ${e.message}")
         }
     }
-
 
 }
 
