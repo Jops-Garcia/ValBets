@@ -1,5 +1,7 @@
 package com.example.valbets
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
@@ -7,7 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -23,8 +28,11 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.http.HttpService
 import org.web3j.tx.gas.DefaultGasProvider
+import org.web3j.utils.Convert
+import java.math.BigDecimal
 import java.math.BigInteger
 
 
@@ -79,7 +87,7 @@ class ViewPagerAdapter(fragment: FragmentActivity) : FragmentStateAdapter(fragme
 }
 
 
-class PartidaAdapter(private val matches: List<Match>) : RecyclerView.Adapter<PartidaAdapter.PartidaViewHolder>() {
+class PartidaAdapter(private val context: Context, private val matches: List<Match>) : RecyclerView.Adapter<PartidaAdapter.PartidaViewHolder>() {
 
     inner class PartidaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textTeamA: TextView = itemView.findViewById(R.id.textTeamA)
@@ -107,44 +115,103 @@ class PartidaAdapter(private val matches: List<Match>) : RecyclerView.Adapter<Pa
         holder.imageTeamA.setImageResource(match.logoA)
         holder.imageTeamB.setImageResource(match.logoB)
 
-        val infuraUrl = "https://sepolia.infura.io/v3/4600bb8b5bba4b249949044e28f64b07"
-        val web3 = Web3j.build(HttpService(infuraUrl))
-        val credentials = Credentials.create("4600bb8b5bba4b249949044e28f64b07")
-        val contractAddress = "0xc2aD23B58278Dd729Ca16d7b7ecD6Bb9C2AF60A7"
-
-        // Carregue o contrato usando a classe gerada
-        val bettingContract = BetVal.load(contractAddress, web3, credentials, DefaultGasProvider())
-
-
-        // Verifique se a partida já teve um placar registrado
-        if (match.placarA != 0 || match.placarB != 0) {
-            holder.buttonPlaceBet.visibility = View.GONE
+        // Mostrar ou ocultar o botão de aposta
+        holder.buttonPlaceBet.visibility = if (match.placarA == 0 && match.placarB == 0) {
+            View.VISIBLE
         } else {
-            holder.buttonPlaceBet.visibility = View.VISIBLE
+            View.GONE
         }
 
         holder.buttonPlaceBet.setOnClickListener {
-            // Defina o valor da aposta (em wei) - 0.01 ETH, por exemplo
-            val betAmount = BigInteger.valueOf(1000000000000000)  // 0.01 ETH em wei
-
-            try {
-                // Envia a transação para fazer uma aposta no Time A
-                val transactionReceipt = bettingContract.placeBetOnTeamA(betAmount).send()
-
-                // Verifica o status da transação
-                if (transactionReceipt.isStatusOK) {
-                    Toast.makeText(holder.itemView.context, "Aposta realizada com sucesso!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(holder.itemView.context, "Falha na aposta", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(holder.itemView.context, "Erro ao realizar a aposta: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            exibirDialogoAposta(holder.itemView.context, match)
         }
 
     }
 
     override fun getItemCount(): Int = matches.size
+
+    fun exibirDialogoAposta(context: Context, partida: Match) {
+        val dialog = AlertDialog.Builder(context)
+        val layoutInflater = LayoutInflater.from(context)
+        val dialogView = layoutInflater.inflate(R.layout.bet_dialog, null)
+
+        val edtQuantidade = dialogView.findViewById<EditText>(R.id.edtQuantidade)
+        val radioGroupTimes = dialogView.findViewById<RadioGroup>(R.id.radioGroupTimes)
+
+        dialog.setView(dialogView)
+        dialog.setTitle("Fazer Aposta")
+        dialog.setPositiveButton("Apostar") { _, _ ->
+            val quantidade = edtQuantidade.text.toString().toBigDecimalOrNull()
+            val timeSelecionadoId = radioGroupTimes.checkedRadioButtonId
+
+            if (quantidade != null && timeSelecionadoId != -1) {
+                val timeSelecionado = when (timeSelecionadoId) {
+                    R.id.radioTimeA -> partida.equipeA.name
+                    R.id.radioTimeB -> partida.equipeB.name
+                    else -> null
+                }
+
+                if (timeSelecionado != null) {
+                    enviarTransacao(quantidade, partida, timeSelecionado, context)
+                } else {
+                    Toast.makeText(context, "Selecione um time válido.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Por favor, insira todos os dados.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        dialog.setNegativeButton("Cancelar", null)
+        dialog.show()
+    }
+
+    fun enviarTransacao(valor: BigDecimal, partida: Match, timeSelecionado: String, context: Context) {
+        val infuraUrl = "https://sepolia.infura.io/v3/<sua-api-key>"
+        val contractAddress = "<endereco-do-contrato>"
+
+        val web3j = Web3j.build(HttpService(infuraUrl))
+
+        try {
+            // Conectar à carteira via MetaMask
+            val ethAmount = Convert.toWei(valor, Convert.Unit.ETHER).toBigInteger()
+
+            // Determinar a função do contrato a ser chamada
+            val functionName = if (timeSelecionado == partida.equipeA.name) {
+                "placeBetOnTeamA"
+            } else if (timeSelecionado == partida.equipeB.name) {
+                "placeBetOnTeamB"
+            } else {
+                Toast.makeText(context, "Time selecionado inválido.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // Construa a transação com os dados necessários
+            val transaction = Transaction.createFunctionCallTransaction(
+                "<sua-carteira>",
+                null,
+                BigInteger.ZERO,
+                DefaultGasProvider.GAS_LIMIT,
+                contractAddress,
+                ethAmount,
+                org.web3j.abi.datatypes.Function(
+                    functionName,
+                    emptyList(),
+                    emptyList()
+                ).encode()
+            )
+
+             //Envie a transação para a rede via MetaMask
+            val response = web3j.ethSendTransaction(transaction).send()
+
+            if (response.hasError()) {
+                Toast.makeText(context, "Erro na transação: ${response.error.message}", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, "Aposta realizada! TxHash: ${response.transactionHash}", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Erro ao enviar transação: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
 }
 

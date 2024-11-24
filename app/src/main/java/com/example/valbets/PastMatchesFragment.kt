@@ -26,8 +26,8 @@ class PastMatchesFragment : Fragment() {
         val jops: Player = Player("Jops", 10, 5, 3)
         val dudalol: Player = Player("Dudalol", 15, 8, 4)
         var players : List<Player> = listOf(jops, dudalol)
-        val teamA = Team("Jops", players, true)
-        val teamB = Team("Dudalol", players, false)
+        val teamA = Team("EDG", players, true)
+        val teamB = Team("Heretics", players, false)
 
         var logoA = R.drawable._2c82049253b2
         var logoB = R.drawable._37b755224c12
@@ -42,6 +42,6 @@ class PastMatchesFragment : Fragment() {
 
             )
 
-        recyclerView.adapter = PartidaAdapter(partidasPassadas)
+        recyclerView.adapter = PartidaAdapter(requireContext() ,partidasPassadas)
     }
 }
