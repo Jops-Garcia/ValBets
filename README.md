@@ -85,9 +85,11 @@ O aplicativo possui:
 - Criar contratos de partidas de forma automática.
 - Criar partidas de forma automática usando uma API.
 - Adquirir resultados de forma automática
-- Suporte a múltiplas partidas simultâneas no contrato.
 - Melhorias na interface do usuário.
+- Aplicar padrões de projeto.
 - Adoção de bibliotecas de segurança para o armazenamento de credenciais.
+
+Obs: Este projeto NÃO se encontra finalizado, ainda há diversos ajustes a serem feitos como refatoração, aplicar padrão de projeto, ajustes em nomes de variáveis, classes e em lógicas, etc.
 
 
 ![print1](https://github.com/user-attachments/assets/bef5a362-2ed9-4720-9f47-dc3147c631fc)
