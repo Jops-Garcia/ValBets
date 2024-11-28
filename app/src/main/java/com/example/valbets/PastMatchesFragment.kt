@@ -23,14 +23,14 @@ class PastMatchesFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewPastMatches)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val jops: Player = Player("Jops", 10, 5, 3)
-        val dudalol: Player = Player("Dudalol", 15, 8, 4)
-        var players : List<Player> = listOf(jops, dudalol)
+        val jops = Player("Jops", 10, 5, 3)
+        val dudalol = Player("Dudalol", 15, 8, 4)
+        val players : List<Player> = listOf(jops, dudalol)
         val teamA = Team("EDG", players, true)
         val teamB = Team("Heretics", players, false)
 
-        var logoA = R.drawable._2c82049253b2
-        var logoB = R.drawable._37b755224c12
+        val logoA = R.drawable._2c82049253b2
+        val logoB = R.drawable._37b755224c12
 
 
 
@@ -42,6 +42,6 @@ class PastMatchesFragment : Fragment() {
 
             )
 
-        recyclerView.adapter = MatchAdapter(requireContext() ,partidasPassadas)
+        recyclerView.adapter = MatchAdapter(partidasPassadas)
     }
 }

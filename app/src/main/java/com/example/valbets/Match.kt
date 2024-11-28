@@ -1,7 +1,5 @@
 package com.example.valbets
 
-import android.media.Image
-
 class Match(
     val teamA: Team,
     val teamB: Team,

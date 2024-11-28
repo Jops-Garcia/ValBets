@@ -89,7 +89,7 @@ class ViewPagerAdapter(fragment: FragmentActivity) : FragmentStateAdapter(fragme
 }
 
 
-class MatchAdapter(private val context: Context, private val matches: List<Match>) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
+class MatchAdapter(private val matches: List<Match>) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
 
     inner class MatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textTeamA: TextView = itemView.findViewById(R.id.textTeamA)
@@ -173,6 +173,7 @@ class MatchAdapter(private val context: Context, private val matches: List<Match
         val web3j = Web3j.build(HttpService("https://sepolia.infura.io/v3/<YOUR_INFURA_PROJECT_ID>"))
         val credentials = Credentials.create("<PRIVATE_KEY>")
         val contractAdress = "<CONTRACT_ADDRESS>"
+
 
         try {
             val nonce = web3j.ethGetTransactionCount(credentials.address, DefaultBlockParameterName.LATEST)
