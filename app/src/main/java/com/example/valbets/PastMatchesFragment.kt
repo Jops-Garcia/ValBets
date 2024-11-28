@@ -42,6 +42,6 @@ class PastMatchesFragment : Fragment() {
 
             )
 
-        recyclerView.adapter = PartidaAdapter(requireContext() ,partidasPassadas)
+        recyclerView.adapter = MatchAdapter(requireContext() ,partidasPassadas)
     }
 }

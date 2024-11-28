@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.res.painterResource
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.compose.foundation.Image
 
 class FutureMatchesFragment : Fragment() {
 
@@ -34,13 +32,13 @@ class FutureMatchesFragment : Fragment() {
         var logoB = R.drawable._37b755224c12
 
 
-        val partidasFuturas = listOf(
+        val futureMatchesList = listOf(
             Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
             Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
             Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
 
             )
 
-        recyclerView.adapter = PartidaAdapter(requireContext(), partidasFuturas)
+        recyclerView.adapter = MatchAdapter(requireContext(), futureMatchesList)
     }
 }

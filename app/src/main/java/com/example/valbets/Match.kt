@@ -3,11 +3,11 @@ package com.example.valbets
 import android.media.Image
 
 class Match(
-    val equipeA: Team,
-    val equipeB: Team,
-    val placarA: Int,
-    val placarB: Int,
-    val data: String,
+    val teamA: Team,
+    val teamB: Team,
+    val scoreA: Int,
+    val scoreB: Int,
+    val date: String,
     val topFragger: Player,
     val topAssist: Player,
     val topDeath: Player,
