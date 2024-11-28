@@ -59,7 +59,7 @@ O aplicativo possui:
 2. Configure o endereço do contrato e a chave privada no arquivo `MainActivity.kt`:
    ```kotlin
    val credentials = Credentials.create("<PRIVATE_KEY>")
-   val contratoEndereco = "<CONTRACT_ADDRESS>"
+   val contractAdress = "<CONTRACT_ADDRESS>"
    ```
 
 3. Substitua o endpoint Infura no código:
