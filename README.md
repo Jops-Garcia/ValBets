@@ -91,7 +91,7 @@ O aplicativo possui:
 
 Obs: Este projeto NÃO se encontra finalizado, ainda há diversos ajustes a serem feitos como refatoração, aplicar padrão de projeto, ajustes em nomes de variáveis, classes e em lógicas, etc.
 
-![image](https://github.com/user-attachments/assets/0a1e16a5-ba7f-4e4f-aa72-218589f2414a)
-![print2](https://github.com/user-attachments/assets/be22a757-f37d-4ada-992f-9f02980a3a21)
+![print1](https://github.com/user-attachments/assets/0a1e16a5-ba7f-4e4f-aa72-218589f2414a)
+![print2](https://github.com/user-attachments/assets/0720bb1a-0f4d-4a91-8dc3-169c469c7199)
 ![image](https://github.com/user-attachments/assets/1108c987-15f1-46e6-86dd-f6d205059161)
 
