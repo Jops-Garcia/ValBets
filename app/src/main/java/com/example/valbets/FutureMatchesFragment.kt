@@ -22,20 +22,26 @@ class FutureMatchesFragment : Fragment() {
 
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewFutureMatches)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val jops = Player("Jops", 10, 5, 3)
-        val dudalol = Player("Dudalol", 15, 8, 4)
-        val players : List<Player> = listOf(jops, dudalol)
-        val teamA = Team("EDG", players, true)
-        val teamB = Team("Heretics", players, false)
+        val player1 = Player("player1", 10, 5, 3)
+        val player2 = Player("player2", 15, 8, 4)
+        val players : List<Player> = listOf(player1, player2)
+
+        val teamA = Team("EDG", players)
+        val teamB = Team("Heretics", players)
+        val teamC = Team("Loud", players)
+        val teamD = Team("G2", players)
 
         val logoA = R.drawable._2c82049253b2
         val logoB = R.drawable._37b755224c12
+        val logoC = R.drawable.loud
+        val logoD = R.drawable.g2
 
 
         val futureMatchesList = listOf(
-            Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
-            Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
-            Match(teamA, teamB, 0, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
+            Match(teamA, teamB, 0, 0, "20/11/2024",logoA,logoB),
+            Match(teamC, teamD, 0, 0, "25/11/2024",logoC,logoD),
+            Match(teamD, teamA, 0, 0, "30/11/2024",logoD,logoA),
+            Match(teamC, teamB, 0, 0, "02/12/2024",logoC,logoB),
 
             )
 

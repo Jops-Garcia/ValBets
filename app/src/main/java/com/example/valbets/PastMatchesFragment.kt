@@ -23,23 +23,25 @@ class PastMatchesFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewPastMatches)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val jops = Player("Jops", 10, 5, 3)
-        val dudalol = Player("Dudalol", 15, 8, 4)
-        val players : List<Player> = listOf(jops, dudalol)
-        val teamA = Team("EDG", players, true)
-        val teamB = Team("Heretics", players, false)
+        val player1 = Player("player1", 10, 5, 3)
+        val player2 = Player("player2", 15, 8, 4)
+        val players : List<Player> = listOf(player1, player2)
+
+        val teamA = Team("EDG", players)
+        val teamB = Team("Heretics", players)
+        val teamC = Team("Loud", players)
+        val teamD = Team("G2", players)
 
         val logoA = R.drawable._2c82049253b2
         val logoB = R.drawable._37b755224c12
+        val logoC = R.drawable.loud
+        val logoD = R.drawable.g2
 
 
 
         val partidasPassadas = listOf(
-            Match(teamA, teamB, 3, 0, "05/11/2024",jops,jops,jops,logoA,logoB),
-            Match(teamA, teamB, 2, 1, "05/11/2024",jops,jops,jops,logoA,logoB),
-            Match(teamA, teamB, 1, 2, "05/11/2024",jops,jops,jops,logoA,logoB),
-            Match(teamA, teamB, 0, 3, "05/11/2024",jops,jops,jops,logoA,logoB),
-
+            Match(teamA, teamB, 3, 0, "05/11/2024",player1,player1,player1,logoA,logoB),
+            Match(teamA, teamC, 0, 3, "18/11/2024",player1,player1,player1,logoA,logoC),
             )
 
         recyclerView.adapter = MatchAdapter(partidasPassadas)
