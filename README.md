@@ -13,7 +13,7 @@ ValBets é um aplicativo Android desenvolvido para gerenciar apostas em partidas
 ## 🛠️ Tecnologias Utilizadas
 
 - **Linguagem**: Solidity, Kotlin
-- **Ferramentas**: Remix IDE, MetaMask, Infura
+- **Ferramentas**: Remix IDE, Infura
 - **Rede**: Sepolia (Testnet Ethereum)
 - **Bibliotecas**:
   - [Web3j](https://github.com/web3j/web3j) - Para integração com a blockchain Ethereum.
