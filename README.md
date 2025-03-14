@@ -71,7 +71,7 @@ O aplicativo possui:
 
 ## 🧪 Testando o Projeto
 
-1. Configure uma carteira MetaMask com ETH na rede de testes Sepolia.
+1. Configure uma carteira virtual com ETH na rede de testes Sepolia.
 2. No aplicativo:
    - Navegue até as **Partidas Futuras**.
    - Clique em uma partida e insira o valor da aposta.
