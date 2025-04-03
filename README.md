@@ -53,7 +53,7 @@ O aplicativo possui:
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/valbets.git
+   git clone https://github.com/Jops-Garcia/ValBets.git
    cd valbets
 
 2. Configure o endereço do contrato e a chave privada no arquivo `MainActivity.kt`:
